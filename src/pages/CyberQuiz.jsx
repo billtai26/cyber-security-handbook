@@ -1,28 +1,44 @@
 import { useState } from 'react'
 import { Container, Typography, Button, Card, CardContent, Chip } from '@mui/material'
 import SmartToyIcon from '@mui/icons-material/SmartToy'
+import { generateCyberQuestion } from '../services/geminiApi' // Import hàm vừa viết
 
 const CyberQuiz = () => {
   const [question, setQuestion] = useState(null)
   const [loading, setLoading] = useState(false)
   const [showAnswer, setShowAnswer] = useState(false)
 
-  const generateQuestion = async () => {
+  // const generateQuestion = async () => {
+  //   setLoading(true)
+  //   setShowAnswer(false)
+
+  //   // --- KHU VỰC GỌI GEMINI API (Sẽ thay thế bằng code thật) ---
+  //   // Mô phỏng request tới Gemini
+  //   setTimeout(() => {
+  //     setQuestion({
+  //       scenario: 'Bạn nhận được email từ \'Faceb00k Support\' yêu cầu đổi mật khẩu vì tài khoản bị khóa, kèm theo đường link \'facebook-security-check.com\'. Bạn nên làm gì?',
+  //       type: 'Phishing (Lừa đảo)',
+  //       answer: 'Đây là email lừa đảo (Phishing).',
+  //       explanation: '1. Tên người gửi \'Faceb00k\' sai chính tả. 2. Đường link không phải \'facebook.com\'. KHÔNG ĐƯỢC nhấn vào link.'
+  //     })
+  //     setLoading(false)
+  //   }, 1000)
+  //   // ---------------------------------------------------------
+  // }
+
+  const handleGenerateQuestion = async () => {
     setLoading(true)
     setShowAnswer(false)
+    setQuestion(null) // Reset câu hỏi cũ
 
-    // --- KHU VỰC GỌI GEMINI API (Sẽ thay thế bằng code thật) ---
-    // Mô phỏng request tới Gemini
-    setTimeout(() => {
-      setQuestion({
-        scenario: 'Bạn nhận được email từ \'Faceb00k Support\' yêu cầu đổi mật khẩu vì tài khoản bị khóa, kèm theo đường link \'facebook-security-check.com\'. Bạn nên làm gì?',
-        type: 'Phishing (Lừa đảo)',
-        answer: 'Đây là email lừa đảo (Phishing).',
-        explanation: '1. Tên người gửi \'Faceb00k\' sai chính tả. 2. Đường link không phải \'facebook.com\'. KHÔNG ĐƯỢC nhấn vào link.'
-      })
-      setLoading(false)
-    }, 1000)
-    // ---------------------------------------------------------
+    const result = await generateCyberQuestion()
+
+    if (result) {
+      setQuestion(result)
+    } else {
+      alert('Có lỗi khi gọi AI, vui lòng thử lại sau!')
+    }
+    setLoading(false)
   }
 
   return (
@@ -36,7 +52,7 @@ const CyberQuiz = () => {
 
       <Button
         variant="contained"
-        onClick={generateQuestion}
+        onClick={handleGenerateQuestion}
         disabled={loading}
         className="bg-purple-600 hover:bg-purple-700 mb-8"
       >

@@ -1,31 +1,23 @@
 import { useState } from 'react'
 import { Container, Typography, TextField, Button, Paper, Alert } from '@mui/material'
 import SearchIcon from '@mui/icons-material/Search'
+import { checkUrlSafety } from '../services/virusTotalApi'
 
 const UrlChecker = () => {
   const [url, setUrl] = useState('')
   const [result, setResult] = useState(null)
   const [loading, setLoading] = useState(false)
 
-  const handleCheck = () => {
+  const handleCheck = async () => {
     if (!url) return
     setLoading(true)
     setResult(null)
 
-    // --- KHU VỰC GỌI API (Sẽ thay thế bằng VirusTotal API thật sau này) ---
-    setTimeout(() => {
-      // Giả lập kết quả trả về
-      const isMalicious = Math.random() < 0.5 // Random hên xui để demo
-      setResult({
-        safe: !isMalicious,
-        message: isMalicious
-          ? 'CẢNH BÁO: Trang web này có dấu hiệu lừa đảo/độc hại!'
-          : 'AN TOÀN: Không phát hiện mối đe dọa nào.',
-        details: 'Quét bởi 65/90 công cụ bảo mật.'
-      })
-      setLoading(false)
-    }, 1500)
-    // -------------------------------------------------------------------
+    // Gọi API thật thay vì setTimeout
+    const data = await checkUrlSafety(url)
+    setResult(data)
+
+    setLoading(false)
   }
 
   return (
